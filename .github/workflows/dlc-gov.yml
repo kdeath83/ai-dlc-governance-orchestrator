@@ -1,0 +1,18 @@
+name: AI-DLC Governance Gate
+on: [pull_request]
+jobs:
+  dlc-gov:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install DLC Gov
+        run: npm install -g ai-dlc-governance-orchestrator
+      - name: Generate Steering File
+        run: dlc-gov generate --jurisdiction=${{ vars.DLC_JURISDICTION || 'MAS-SG' }}
+      - name: Audit Traceability
+        run: dlc-gov audit --commit=${{ github.event.pull_request.head.sha }}
+      - name: Risk Gate
+        run: dlc-gov gate --pr=${{ github.event.number }} --materiality=${{ vars.DLC_JURISDICTION || 'MAS-SG' }} --block-on=material

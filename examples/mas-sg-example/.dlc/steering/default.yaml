@@ -1,0 +1,33 @@
+# AI-DLC Steering File
+# Jurisdiction: MAS-SG
+# Generated: 2026-05-26T12:00:00.000Z
+
+jurisdiction: MAS-SG
+version: "0.1.0"
+generated: "2026-05-26T12:00:00.000Z"
+security:
+  requireEncryption: true
+  approvedDependencies:
+    - aws-cdk-lib@^2.0
+    - express@^4.18
+    - react@^18.2
+    - typescript@^5.0
+  maxCveScore: 7
+  requireSecretsRotation: true
+architecture:
+  allowedRegions:
+    - ap-southeast-1
+    - ap-southeast-2
+  requireApiVersioning: true
+  requireMultiAz: true
+regulatory:
+  documentRiskClassification: true
+  requireHumanReview: true
+  requireAuditTrail: true
+ai:
+  allowedAgents:
+    - amazon-kiro
+    - claude-code
+    - codex
+  requireSteeringFile: true
+  maxCodeGenerationRatio: 0.85

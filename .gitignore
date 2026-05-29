@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+cdk/node_modules/
+
+# Build outputs
+dist/
+cdk/dist/
+cdk/cdk.out/
+
+# Environment
+.env
+.env.local
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# CDK
+*.cdk.out
+*.assets.json
+*.manifest.json
+tree.json
+
+# Misc
+*.pem
+*.key
+*.p12
+*.crt

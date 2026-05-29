@@ -16,6 +16,90 @@ The orchestrator connects three governance stages into a single pipeline:
 2. **Traceability Validation** — Validates that every AI-generated change links back to a requirement, includes test coverage, and references a steering file.
 3. **Risk-Based Gate** — Classifies changes by materiality and blocks human review for material changes before merge.
 
+## One-Click Deploy to AWS
+
+Deploy the full stack (S3, DynamoDB, Lambda, API Gateway) in a single command.
+
+### Prerequisites
+
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) configured (`aws configure`)
+- [Node.js](https://nodejs.org/) 18+
+- [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_prerequisites) (`npm install -g aws-cdk`)
+
+### Deploy
+
+```bash
+git clone https://github.com/kdeath83/ai-dlc-governance-orchestrator.git
+cd ai-dlc-governance-orchestrator
+./deploy.sh
+```
+
+**With options:**
+```bash
+# Deploy to a specific region
+./deploy.sh --region ap-southeast-1
+
+# Use a specific AWS profile
+./deploy.sh --profile my-aws-profile
+
+# Both
+./deploy.sh --region ap-southeast-1 --profile my-aws-profile
+```
+
+**What it does:**
+- Checks AWS credentials and Node.js
+- Installs dependencies (root + `cdk/`)
+- Builds TypeScript
+- Bootstraps CDK in the target region
+- Deploys the CloudFormation stack
+- Writes stack outputs to `cdk-outputs.json`
+
+**Infrastructure created:**
+
+| Resource | Details |
+|----------|---------|
+| **S3 bucket** | `dlc-gov-steering-<account>-<region>` — versioned, SSE-S3 encrypted |
+| **DynamoDB table** | `DlcGovAuditTrail` — pay-per-request, PITR enabled, AWS-managed encryption |
+| **Lambda function** | `DlcGovFunction` — Node.js 20, 2GB RAM, 60s timeout, X-Ray tracing |
+| **API Gateway** | REST API with `/generate`, `/audit`, `/gate` endpoints |
+| **API Key** | Required for all endpoints, rate limited (100/s burst, 10K/day quota) |
+| **IAM role** | Least privilege — S3 read/write, DynamoDB read/write, CloudWatch via managed policy |
+
+### Test the API
+
+After deploy, retrieve the API key from the **API Gateway console** (or `cdk-outputs.json` for the key ID):
+
+```bash
+# Get outputs
+API_URL=$(cat cdk-outputs.json | python3 -c "import json,sys; d=json.load(sys.stdin); print(list(d.values())[0]['ApiUrl'])")
+API_KEY=$(aws apigateway get-api-key --api-key-id $(cat cdk-outputs.json | python3 -c "import json,sys; d=json.load(sys.stdin); print(list(d.values())[0]['ApiKeyId'])") --include-value --query value --output text)
+
+# Generate steering file
+curl -X POST "$API_URL/generate" \
+  -H "x-api-key: $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"jurisdiction":"MAS-SG","output":"/tmp/steering"}'
+
+# Audit a commit
+curl -X POST "$API_URL/audit" \
+  -H "x-api-key: $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"commit":"HEAD","steering":".dlc/steering/"}'
+
+# Gate a PR
+curl -X POST "$API_URL/gate" \
+  -H "x-api-key: $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"pr":"123","materiality":"MAS-SG","blockOn":"material"}'
+```
+
+### Teardown
+
+```bash
+cd cdk
+npx cdk destroy --force
+```
+
 ## Architecture
 
 ```
@@ -106,47 +190,6 @@ npx dlc-gov gate --pr=123 --materiality=MAS-SG --block-on=material
 
 **PR detection:** For PR numbers other than `1`, the gate attempts to fetch files via `gh pr view`. Falls back to `git diff HEAD~1 HEAD` for local validation or `GATE_FILES` environment variable.
 
-## AWS Deployment
-
-One-click deploy via AWS CDK:
-
-```bash
-./deploy.sh
-```
-
-**Prerequisites:**
-- AWS CLI configured (`aws configure`)
-- Node.js 18+
-- AWS CDK (`npm install -g aws-cdk`)
-
-**Infrastructure created:**
-- **S3 bucket** — Versioned, encrypted steering file storage
-- **DynamoDB table** — `DlcGovAuditTrail` with point-in-time recovery
-- **Lambda function** — Node.js 20, 2GB RAM, 60s timeout, X-Ray tracing
-- **API Gateway** — REST API with `/generate`, `/audit`, `/gate` endpoints
-- **API Key** — Required for all endpoints, rate limited (100/s, 10K/day)
-
-**API Endpoints:**
-```bash
-# Generate steering file
-curl -X POST https://<api-url>/generate \
-  -H "x-api-key: <api-key>" \
-  -H "Content-Type: application/json" \
-  -d '{"jurisdiction":"MAS-SG","output":"/tmp/steering"}'
-
-# Audit commit
-curl -X POST https://<api-url>/audit \
-  -H "x-api-key: <api-key>" \
-  -H "Content-Type: application/json" \
-  -d '{"commit":"HEAD","steering":".dlc/steering/"}'
-
-# Gate PR
-curl -X POST https://<api-url>/gate \
-  -H "x-api-key: <api-key>" \
-  -H "Content-Type: application/json" \
-  -d '{"pr":"123","materiality":"MAS-SG","blockOn":"material"}'
-```
-
 ## CI/CD Integration
 
 **GitHub Actions example (`.github/workflows/dlc-gov.yml`):**
@@ -211,7 +254,7 @@ ai-dlc-governance-orchestrator/
 │   └── gate.test.ts           # Materiality classification tests
 ├── examples/
 │   └── mas-sg-example/        # Sample steering file + GitHub Actions workflow
-├── deploy.sh                  # One-click deploy script
+├── deploy.sh                  # One-click deploy to AWS
 ├── Dockerfile                 # Container image (Alpine Linux, Node 20)
 ├── .dockerignore              # Excludes secrets, node_modules, docs
 ├── .gitignore                 # Excludes build outputs, env files
@@ -220,7 +263,7 @@ ai-dlc-governance-orchestrator/
 └── README.md                  # This file
 ```
 
-## Getting Started
+## Getting Started (Local)
 
 ```bash
 # Clone and install

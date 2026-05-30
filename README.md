@@ -4,9 +4,9 @@ An end-to-end governance pipeline for AI-Driven Development Lifecycle (AI-DLC) t
 
 ## Rationale
 
-This project implements the AI-DLC methodology described in the AWS blog post *"AI-Driven Development Lifecycle for Financial Services"* by Silvia Prieto, Jean-Francois Landreau, and Richard Caven (26 May 2026).
+This project implements the AI-DLC methodology described in the AWS blog post *"AI-Driven Development Lifecycle for Financial Services"* by Silvia Prieto, Jean-Francois Landreau, and Richard Caven (26 May 2026) - https://aws.amazon.com/blogs/industries/ai-driven-development-lifecycle-for-financial-services/
 
-Regulated industries cannot rely on fully autonomous AI development or simple AI-assisted autocomplete. AI-DLC requires a middle path: AI agents orchestrate the development process while humans retain oversight, decision-making authority, and accountability. This orchestrator provides the tooling layer that makes that middle path enforceable.
+At the moement, regulated industries cannot rely on fully autonomous AI development or simple AI-assisted autocomplete. AI-DLC requires a middle path: AI agents orchestrate the development process while humans retain oversight, decision-making authority, and accountability. This orchestrator provides the tooling layer that makes that middle path enforceable.
 
 ## What It Does
 

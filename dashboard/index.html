@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-DLC Governance Orchestrator — Executive Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <h1>AI-DLC Governance Orchestrator</h1>
+        <span class="subtitle">Executive Compliance Dashboard</span>
+      </div>
+      <div class="header-right">
+        <select id="jurisdiction-selector" class="jurisdiction-select">
+          <option value="MAS-SG">MAS Singapore</option>
+          <option value="EU-AI-ACT">EU AI Act</option>
+          <option value="AU-APRA">AU APRA/ASIC</option>
+        </select>
+        <span class="status-badge" id="overall-status">Compliant</span>
+      </div>
+    </header>
+
+    <!-- Stage Cards -->
+    <div class="stage-cards">
+      <div class="stage-card" id="stage-steering">
+        <div class="stage-header">
+          <div class="stage-icon steering-icon">🎯</div>
+          <div class="stage-title">
+            <h2>Stage 1: Steering Generation</h2>
+            <span class="stage-description">What the AI is allowed to generate</span>
+          </div>
+          <div class="stage-status" id="steering-status">✓</div>
+        </div>
+        <div class="stage-metrics">
+          <div class="metric">
+            <span class="metric-value" id="steering-files">12</span>
+            <span class="metric-label">Steering Files</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="steering-rules">47</span>
+            <span class="metric-label">Active Rules</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="steering-coverage">100%</span>
+            <span class="metric-label">Rule Coverage</span>
+          </div>
+        </div>
+        <div class="stage-chart">
+          <canvas id="steering-chart"></canvas>
+        </div>
+      </div>
+
+      <div class="stage-card" id="stage-traceability">
+        <div class="stage-header">
+          <div class="stage-icon traceability-icon">🔗</div>
+          <div class="stage-title">
+            <h2>Stage 2: Traceability Validation</h2>
+            <span class="stage-description">Every change links to requirements</span>
+          </div>
+          <div class="stage-status" id="traceability-status">✓</div>
+        </div>
+        <div class="stage-metrics">
+          <div class="metric">
+            <span class="metric-value" id="audit-pass">94%</span>
+            <span class="metric-label">Pass Rate</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="ai-detected">23</span>
+            <span class="metric-label">AI Commits</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="req-linked">89%</span>
+            <span class="metric-label">Req Linked</span>
+          </div>
+        </div>
+        <div class="stage-chart">
+          <canvas id="traceability-chart"></canvas>
+        </div>
+      </div>
+
+      <div class="stage-card" id="stage-gate">
+        <div class="stage-header">
+          <div class="stage-icon gate-icon">🚧</div>
+          <div class="stage-title">
+            <h2>Stage 3: Risk-Based Gate</h2>
+            <span class="stage-description">Material changes blocked for review</span>
+          </div>
+          <div class="stage-status" id="gate-status">✓</div>
+        </div>
+        <div class="stage-metrics">
+          <div class="metric">
+            <span class="metric-value" id="gate-pass">97%</span>
+            <span class="metric-label">Gate Pass</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="material-blocked">8</span>
+            <span class="metric-label">Blocked</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="human-reviewed">8</span>
+            <span class="metric-label">Human Review</span>
+          </div>
+        </div>
+        <div class="stage-chart">
+          <canvas id="gate-chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Log -->
+    <div class="activity-section">
+      <h2>Recent Activity</h2>
+      <div class="activity-filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="steering">Steering</button>
+        <button class="filter-btn" data-filter="audit">Audit</button>
+        <button class="filter-btn" data-filter="gate">Gate</button>
+      </div>
+      <div class="activity-table-container">
+        <table class="activity-table" id="activity-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Type</th>
+              <th>Jurisdiction</th>
+              <th>Status</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="activity-body">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Compliance Trend -->
+    <div class="trend-section">
+      <h2>Compliance Trend (30 Days)</h2>
+      <div class="trend-chart-container">
+        <canvas id="trend-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script src="demo-data.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

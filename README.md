@@ -121,7 +121,36 @@ Commit / Pull Request
          |
          v
 Audit Report (JSON)
+         |
+         v
+Executive Dashboard (S3 static website + CloudFront)
 ```
+
+### Executive Dashboard
+
+The dashboard provides real-time visibility into compliance across all three AI-DLC stages:
+
+- **Stage 1: Steering Generation** — Rule coverage, active steering files, jurisdiction compliance
+- **Stage 2: Traceability Validation** — Audit pass rates, AI commit detection, requirement linkage
+- **Stage 3: Risk-Based Gate** — Gate pass rates, material changes blocked, human review status
+
+**Live Demo:** https://kdeath83.github.io/ai-dlc-governance-orchestrator/dashboard/
+
+**Local Demo:**
+```bash
+# Serve the dashboard locally
+cd dashboard
+python -m http.server 8080
+# Open http://localhost:8080 in your browser
+```
+
+The dashboard includes:
+- Jurisdiction selector (MAS-SG, EU-AI-ACT, AU-APRA)
+- Real-time compliance status indicators
+- Interactive charts (doughnut, pie, line)
+- Activity log with filtering
+- 30-day compliance trend visualization
+- Responsive design for desktop and mobile
 
 ## Modules
 

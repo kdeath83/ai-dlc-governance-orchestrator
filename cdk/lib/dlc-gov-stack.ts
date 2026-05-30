@@ -91,6 +91,13 @@ export class DlcGovStack extends cdk.Stack {
       methodResponses: [{ statusCode: '200' }, { statusCode: '400' }, { statusCode: '500' }],
     });
 
+    // Dashboard endpoint
+    const dashboardResource = api.root.addResource('dashboard');
+    dashboardResource.addMethod('POST', new apigw.LambdaIntegration(dlcGovFunction), {
+      apiKeyRequired: true,
+      methodResponses: [{ statusCode: '200' }, { statusCode: '400' }, { statusCode: '500' }],
+    });
+
     plan.addApiStage({ stage: api.deploymentStage });
 
     // Outputs

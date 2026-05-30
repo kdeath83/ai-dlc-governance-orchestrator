@@ -61,7 +61,7 @@ cd ai-dlc-governance-orchestrator
 | **S3 bucket** | `dlc-gov-steering-<account>-<region>` — versioned, SSE-S3 encrypted |
 | **DynamoDB table** | `DlcGovAuditTrail` — pay-per-request, PITR enabled, AWS-managed encryption |
 | **Lambda function** | `DlcGovFunction` — Node.js 20, 2GB RAM, 60s timeout, X-Ray tracing |
-| **API Gateway** | REST API with `/generate`, `/audit`, `/gate` endpoints |
+| **API Gateway** | REST API with `/generate`, `/audit`, `/gate`, `/dashboard` endpoints |
 | **API Key** | Required for all endpoints, rate limited (100/s burst, 10K/day quota) |
 | **IAM role** | Least privilege — S3 read/write, DynamoDB read/write, CloudWatch via managed policy |
 
@@ -281,6 +281,11 @@ ai-dlc-governance-orchestrator/
 ├── tests/
 │   ├── generate.test.ts       # Steering generation tests
 │   └── gate.test.ts           # Materiality classification tests
+├── dashboard/
+│   ├── index.html             # Executive dashboard
+│   ├── dashboard.css          # Dark theme styling
+│   ├── demo-data.js           # Simulated governance data
+│   └── dashboard.js           # Dashboard logic
 ├── examples/
 │   └── mas-sg-example/        # Sample steering file + GitHub Actions workflow
 ├── deploy.sh                  # One-click deploy to AWS
